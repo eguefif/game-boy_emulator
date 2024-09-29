@@ -26,22 +26,6 @@ impl Registers {
         }
     }
 
-    pub fn set_zero(self: &mut Registers) {
-        self.f |= 0b1000000;
-    }
-
-    pub fn set_carry(self: &mut Registers) {
-        self.f |= 0b1000;
-    }
-
-    pub fn set_n(self: &mut Registers) {
-        self.f |= 0b100000;
-    }
-
-    pub fn set_h(self: &mut Registers) {
-        self.f |= 0b10000;
-    }
-
     pub fn set_af(self: &mut Registers, value: u16) {
         (self.a, self.f) = get_high_and_low(value);
     }
@@ -84,6 +68,22 @@ fn get_high_and_low(value: u16) -> (u8, u8) {
     let low = (value & 0xFF) as u8;
 
     (high, low)
+}
+
+pub fn set_zero(f: u8) -> u8 {
+    f | 0b1000000
+}
+
+pub fn set_carry(f: u8) -> u8 {
+    f | 0b1000
+}
+
+pub fn set_n(f: u8) -> u8 {
+    f | 0b100000
+}
+
+pub fn set_h(f: u8) -> u8 {
+    f | 0b10000
 }
 
 #[cfg(test)]
@@ -150,19 +150,17 @@ mod tests {
 
     #[test]
     fn set_zero_flag() {
-        let mut registers = Registers::new();
-        registers.f = 0b1;
-        registers.set_zero();
+        let f = 0;
+        let res = set_zero(f);
 
-        assert_eq!(0b1000001, registers.f);
+        assert_eq!(0b1000000, res);
     }
 
     #[test]
     fn idempotent_if_already_set_carry_flag() {
-        let mut registers = Registers::new();
-        registers.f = 0b1001;
-        registers.set_carry();
+        let f = 0b1001;
+        let res = set_carry(f);
 
-        assert_eq!(0b1001, registers.f);
+        assert_eq!(0b1001, res);
     }
 }

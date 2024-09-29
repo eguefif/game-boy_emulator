@@ -13,8 +13,12 @@ impl Cpu {
     }
 
     pub fn run(self: &mut Cpu) -> u8 {
-        println!("{:?}", self);
-        println!("{:?}", self.registers);
+        let opcode: u8 = 0x80;
+        let high_opcode: u8 = (opcode >> 4) & 0xF;
+        match high_opcode {
+            0x8 => self.add_dispatch(opcode),
+            _ => eprintln!("Opcode {:x?} not implemented.", opcode),
+        }
         1
     }
 }
