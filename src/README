@@ -1,0 +1,39 @@
+# GameBoy emulator
+
+This program emulate the gameboy.
+
+## Description
+
+## Getting Started
+
+### Dependencies
+
+* Install rust [Rust Get Started](https://www.rust-lang.org/learn/get-started)
+
+### Installing
+
+* git clone the repo
+
+### Executing program
+
+* run the program in a terminal
+```bash
+cargo run
+```
+
+## Authors
+
+Contributors names and contact info
+
+Emmanuel Guefif
+
+## Version History
+
+* 0.1
+    * Registers done
+
+## Acknowledgments
+
+Inspiration, code snippets, etc.
+* [pandoc](http://bgb.bircd.org/pandocs.htm#cpuregistersandflags)
+* [DMG-01](https://rylev.github.io/DMG-01/public/book/introduction.html)
