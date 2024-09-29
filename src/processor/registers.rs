@@ -86,6 +86,21 @@ pub fn set_h(f: u8) -> u8 {
     f | 0b10000
 }
 
+pub fn get_carry(f: u8) -> bool {
+    (f & 0b00001000) == 0b00001000
+}
+
+pub fn get_zero(f: u8) -> bool {
+    (f & 0b1000000) == 0b1000000
+}
+
+pub fn get_half_carry(f: u8) -> bool {
+    (f & 0b10000) == 0b10000
+}
+
+pub fn get_n(f: u8) -> bool {
+    (f & 0b100000) == 0b100000
+}
 #[cfg(test)]
 mod tests {
     use super::*;
