@@ -3,12 +3,14 @@ use crate::processor::registers::Registers;
 #[derive(Debug)]
 pub struct Cpu {
     pub registers: Registers,
+    pub memory: [u8; 0xFFFF],
 }
 
 impl Cpu {
     pub fn new() -> Cpu {
         Cpu {
             registers: Registers::new(),
+            memory: [0; 0xFFFF],
         }
     }
 

@@ -38,8 +38,9 @@ impl Cpu {
                 &mut self.registers.f,
             ),
             6 => {
-                let hl_low_nibble = (self.registers.hl() & 0xF) as u8;
-                add(&mut self.registers.a, hl_low_nibble, &mut self.registers.f);
+                let address = self.registers.hl() as usize;
+                let value = self.memory[address];
+                add(&mut self.registers.a, value, &mut self.registers.f);
             }
             7 => {
                 let a_value = self.registers.a;
@@ -115,6 +116,7 @@ mod tests {
         assert_eq!(cpu.registers.a, 0x10);
         assert_eq!(cpu.registers.f, 0b0010000);
     }
+
     #[test]
     fn it_add_nothing_and_set_zero_flag() {
         let mut cpu = Cpu::new();
@@ -125,16 +127,17 @@ mod tests {
         assert_eq!(cpu.registers.a, 0x0);
         assert_eq!(cpu.registers.f, 0b1000000);
     }
+
     #[test]
-    fn it_add_hl_to_a() {
+    fn it_add_memory_content_at_hl_to_ad_no_flag() {
         let mut cpu = Cpu::new();
-        cpu.registers.a = 0x1;
-        cpu.registers.b = 0x0;
-        cpu.registers.h = 0x5;
-        cpu.registers.l = 0x8;
+        let address: usize = 0xff;
+        cpu.memory[address] = 0xa;
+        cpu.registers.a = 0x2;
+        cpu.registers.set_hl(address as u16);
         cpu.add_dispatch(0x86);
 
-        assert_eq!(cpu.registers.a, 0xf9);
-        assert_eq!(cpu.registers.f, 0b0000000);
+        assert_eq!(cpu.registers.a, 0xa + 0x2);
+        assert_eq!(cpu.registers.f, 0b0);
     }
 }
