@@ -42,6 +42,22 @@ impl Registers {
         self.f |= 0b10000;
     }
 
+    pub fn set_af(self: &mut Registers, value: u16) {
+        (self.a, self.f) = get_high_and_low(value);
+    }
+
+    pub fn set_bc(self: &mut Registers, value: u16) {
+        (self.b, self.c) = get_high_and_low(value);
+    }
+
+    pub fn set_de(self: &mut Registers, value: u16) {
+        (self.d, self.e) = get_high_and_low(value);
+    }
+
+    pub fn set_hl(self: &mut Registers, value: u16) {
+        (self.h, self.l) = get_high_and_low(value);
+    }
+
     pub fn af(self: &mut Registers) -> u16 {
         combine(self.a as u16, self.f as u16)
     }
@@ -63,9 +79,34 @@ fn combine(high: u16, low: u16) -> u16 {
     (high << 8) | low
 }
 
+fn get_high_and_low(value: u16) -> (u8, u8) {
+    let high = ((value >> 8) & 0xFF) as u8;
+    let low = (value & 0xFF) as u8;
+
+    (high, low)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn set_bc_should_set_b_and_c() {
+        let mut registers = Registers::new();
+        registers.set_bc(0x3f0);
+
+        assert_eq!(registers.b, 0x3);
+        assert_eq!(registers.c, 0xf0);
+    }
+
+    #[test]
+    fn set_af_should_set_a_and_f() {
+        let mut registers = Registers::new();
+        registers.set_af(0xF301);
+
+        assert_eq!(registers.a, 0xF3);
+        assert_eq!(registers.f, 0x1);
+    }
 
     #[test]
     fn af_return_combine_a_and_f() {
