@@ -33,13 +33,40 @@ impl Cpu {
         let value = self.memory[self.registers.pc] as u16;
         let value_2 = self.memory[self.registers.pc + 1] as u16;
         self.registers.pc += 2;
-        (value << 8) | value_2
+        (value_2 << 8) | value
     }
 
     pub fn set_word(self: &mut Cpu, value: u16) {
-        let value: u8 = (value >> 8) as u8 & 0xF;
-        let value_2: u8 = value & 0xF;
-        self.memory[self.registers.pc] = value;
+        let value_1: u8 = (value & 0xF) as u8;
+        let value_2: u8 = (value >> 8) as u8 & 0xF;
+        self.memory[self.registers.pc] = value_1;
         self.memory[self.registers.pc + 1] = value_2;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn it_fetch_word_from_memory() {
+        let mut cpu = Cpu::new();
+        cpu.registers.pc = 0xFF;
+        let save_pc = cpu.registers.pc;
+        cpu.memory[0xFF] = 0xab;
+        cpu.memory[0xFF + 1] = 0xa0;
+        let res = cpu.fetch_word();
+
+        assert_eq!(res, 0xa0ab);
+        assert_eq!(cpu.registers.pc, save_pc + 2);
+    }
+
+    #[test]
+    fn it_set_word_from_memory() {
+        let mut cpu = Cpu::new();
+        cpu.registers.pc = 0xFF;
+        cpu.set_word(0xf80a);
+
+        assert_eq!(cpu.memory[cpu.registers.pc], 0x0a);
+        assert_eq!(cpu.memory[cpu.registers.pc + 1], 0xf8);
     }
 }
