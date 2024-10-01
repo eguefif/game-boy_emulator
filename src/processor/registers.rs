@@ -10,6 +10,7 @@ pub struct Registers {
     pub f: u8,
     pub h: u8,
     pub l: u8,
+    pub pc: usize,
 }
 
 impl Registers {
@@ -23,6 +24,7 @@ impl Registers {
             f: 0,
             h: 0,
             l: 0,
+            pc: 0,
         }
     }
 
