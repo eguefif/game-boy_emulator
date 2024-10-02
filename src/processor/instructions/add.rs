@@ -89,7 +89,7 @@ impl Cpu {
         }
     }
 }
-fn add(target: &mut u8, value: u8, flags: &mut u8) {
+pub fn add(target: &mut u8, value: u8, flags: &mut u8) {
     let (res, overflow) = target.overflowing_add(value);
     if res == 0 {
         *flags = set_zero(*flags);
@@ -104,7 +104,7 @@ fn add(target: &mut u8, value: u8, flags: &mut u8) {
     *target = res;
 }
 
-fn add_with_carry(target: &mut u8, value: u8, flags: &mut u8) {
+pub fn add_with_carry(target: &mut u8, value: u8, flags: &mut u8) {
     let carry = if get_carry(*flags) { 1 } else { 0 };
     let (tmp, overflow) = target.overflowing_add(value);
     let (res, overflow2) = tmp.overflowing_add(carry);

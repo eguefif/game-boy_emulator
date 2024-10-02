@@ -18,7 +18,7 @@ impl Cpu {
         let opcode: u8 = 0x80;
         let high_opcode: u8 = (opcode >> 4) & 0xF;
         match high_opcode {
-            0x0 => self.range_0_op(opcode),
+            0x0 => self.range_0_dispatch(opcode),
             0x4 => self.load_b_c_dispatch(opcode),
             0x5 => self.load_d_e_dispatch(opcode),
             0x6 => self.load_h_l_dispatch(opcode),
