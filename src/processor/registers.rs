@@ -73,35 +73,39 @@ fn get_high_and_low(value: u16) -> (u8, u8) {
 }
 
 pub fn set_zero(f: u8) -> u8 {
-    f | 0b1000000
+    f | 0b1000_0000
 }
 
 pub fn set_carry(f: u8) -> u8 {
-    f | 0b1000
+    f | 0b1_0000
 }
 
 pub fn set_n(f: u8) -> u8 {
-    f | 0b100000
+    f | 0b100_0000
+}
+
+pub fn set_n_to_zero(f: u8) -> u8 {
+    f & 0b1011_1111
 }
 
 pub fn set_h(f: u8) -> u8 {
-    f | 0b10000
+    f | 0b10_0000
 }
 
 pub fn get_carry(f: u8) -> bool {
-    (f & 0b00001000) == 0b00001000
+    (f & 0b0001_0000) == 0b0001_0000
 }
 
 pub fn get_zero(f: u8) -> bool {
-    (f & 0b1000000) == 0b1000000
+    (f & 0b1000_0000) == 0b1000_0000
 }
 
 pub fn get_half_carry(f: u8) -> bool {
-    (f & 0b10000) == 0b10000
+    (f & 0b0010_0000) == 0b0010_0000
 }
 
 pub fn get_n(f: u8) -> bool {
-    (f & 0b100000) == 0b100000
+    (f & 0b0100_0000) == 0b0100_0000
 }
 #[cfg(test)]
 mod tests {
@@ -170,14 +174,14 @@ mod tests {
         let f = 0;
         let res = set_zero(f);
 
-        assert_eq!(0b1000000, res);
+        assert_eq!(0b1000_0000, res);
     }
 
     #[test]
     fn idempotent_if_already_set_carry_flag() {
-        let f = 0b1001;
+        let f = 0b0001_0001;
         let res = set_carry(f);
 
-        assert_eq!(0b1001, res);
+        assert_eq!(0b0001_0001, res);
     }
 }

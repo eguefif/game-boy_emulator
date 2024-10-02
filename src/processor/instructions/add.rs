@@ -1,6 +1,6 @@
 use crate::processor::{
     cpu::Cpu,
-    registers::{get_carry, set_carry, set_h, set_zero},
+    registers::{get_carry, set_carry, set_h, set_n, set_n_to_zero, set_zero},
 };
 
 impl Cpu {
@@ -90,46 +90,88 @@ impl Cpu {
     }
 }
 fn add(target: &mut u8, value: u8, flags: &mut u8) {
-    let (value, overflow) = target.overflowing_add(value);
-    *target = value;
-    if value == 0 {
+    let (res, overflow) = target.overflowing_add(value);
+    if res == 0 {
         *flags = set_zero(*flags);
     }
     if overflow {
         *flags = set_carry(*flags);
     }
-    if half_overflow(*target, value) {
+    if half_overflow_u8(*target, value) {
         *flags = set_h(*flags);
     }
+    *flags = set_n_to_zero(*flags);
+    *target = res;
 }
 
 fn add_with_carry(target: &mut u8, value: u8, flags: &mut u8) {
     let carry = if get_carry(*flags) { 1 } else { 0 };
-    println!("carry: {carry}");
     let (tmp, overflow) = target.overflowing_add(value);
-    let (value, overflow2) = tmp.overflowing_add(carry);
-    *target = value;
-    if value == 0 {
+    let (res, overflow2) = tmp.overflowing_add(carry);
+    if res == 0 {
         *flags = set_zero(*flags);
     }
     if overflow || overflow2 {
         *flags = set_carry(*flags);
     }
-    if half_overflow(*target, value) {
+    if half_overflow_u8(*target, value) {
         *flags = set_h(*flags);
     }
+    *target = res;
+    *flags = set_n_to_zero(*flags);
 }
 
-fn half_overflow(target: u8, value: u8) -> bool {
-    let low_target_nibble = target & 0xF0;
-    let low_value_nibble = value & 0xF0;
-    low_target_nibble + low_value_nibble > 0xF
+pub fn half_overflow_u8(target: u8, value: u8) -> bool {
+    let low_target_nibble = target & 0xF;
+    let low_value_nibble = value & 0xF;
+    ((low_target_nibble + low_value_nibble) & 0x10) == 0x10
+}
+
+pub fn half_overflow_u16(target: u16, value: u16) -> bool {
+    let low_target_nibble = target & 0xFFF;
+    let low_value_nibble = value & 0xFFF;
+    ((low_target_nibble + low_value_nibble) & 0x1000) == 0x1000
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    //test regular add
+    #[test]
+    fn it_check_half_overflow_u8_true() {
+        let a = 0xf;
+        let b = 0x1;
+
+        let res = half_overflow_u8(a, b);
+        assert!(res);
+    }
+
+    #[test]
+    fn it_check_half_overflow_u8_false() {
+        let a = 0xe;
+        let b = 0x1;
+
+        let res = half_overflow_u8(a, b);
+        assert!(!res);
+    }
+
+    #[test]
+    fn it_check_half_overflow_u16_true() {
+        let a = 0xfff;
+        let b = 0x1;
+
+        let res = half_overflow_u16(a, b);
+        assert!(res);
+    }
+
+    #[test]
+    fn it_check_half_overflow_u16_false() {
+        let a = 0xffe;
+        let b = 0x1;
+
+        let res = half_overflow_u16(a, b);
+        assert!(!res);
+    }
+
     #[test]
     fn it_add_with_no_overflow_flag() {
         let mut cpu = Cpu::new();
@@ -138,9 +180,10 @@ mod tests {
         cpu.add_dispatch(0x80);
 
         assert_eq!(cpu.registers.a, 0x1 + 0x1);
-        assert_eq!(cpu.registers.f, 0x0);
+        assert_eq!(cpu.registers.f, 0b0000000);
     }
 
+    //test add regular add
     #[test]
     fn it_add_with_overflow_and_set_carry_zero_flag() {
         let mut cpu = Cpu::new();
@@ -148,8 +191,9 @@ mod tests {
         cpu.registers.b = 0x1;
         cpu.add_dispatch(0x80);
 
+        println!("{:b}", cpu.registers.a);
         assert_eq!(cpu.registers.a, 0x0);
-        assert_eq!(cpu.registers.f, 0b1001000);
+        assert_eq!(cpu.registers.f, 0b1011_0000);
     }
     #[test]
     fn it_add_with_overflow_and_set_carry_flag() {
@@ -159,7 +203,7 @@ mod tests {
         cpu.add_dispatch(0x80);
 
         assert_eq!(cpu.registers.a, 0x1);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b0011_0000);
     }
 
     #[test]
@@ -169,8 +213,8 @@ mod tests {
         cpu.registers.b = 0x1;
         cpu.add_dispatch(0x80);
 
-        assert_eq!(cpu.registers.a, 0x10);
-        assert_eq!(cpu.registers.f, 0b0010000);
+        assert_eq!(cpu.registers.a, 0x1 + 0xF);
+        assert_eq!(cpu.registers.f, 0b010_0000);
     }
 
     #[test]
@@ -181,20 +225,20 @@ mod tests {
         cpu.add_dispatch(0x80);
 
         assert_eq!(cpu.registers.a, 0x0);
-        assert_eq!(cpu.registers.f, 0b1000000);
+        assert_eq!(cpu.registers.f, 0b1000_0000);
     }
 
     #[test]
     fn it_add_memory_content_at_hl_to_ad_no_flag() {
         let mut cpu = Cpu::new();
         let address: usize = 0xff;
-        cpu.memory[address] = 0xa;
+        cpu.memory[address] = 0x1;
         cpu.registers.a = 0x2;
         cpu.registers.set_hl(address as u16);
         cpu.add_dispatch(0x86);
 
-        assert_eq!(cpu.registers.a, 0xa + 0x2);
-        assert_eq!(cpu.registers.f, 0b0);
+        assert_eq!(cpu.registers.a, 0x1 + 0x2);
+        assert_eq!(cpu.registers.f, 0b000000);
     }
 
     #[test]
@@ -262,7 +306,7 @@ mod tests {
         cpu.add_dispatch(0x88);
 
         assert_eq!(cpu.registers.a, 0x1 + 0x1 + 0x1);
-        assert_eq!(cpu.registers.f, 0b1000);
+        assert_eq!(cpu.registers.f, 0b0001_0000);
     }
 
     #[test]
@@ -274,7 +318,7 @@ mod tests {
         cpu.add_dispatch(0x88);
 
         assert_eq!(cpu.registers.a, 0x1);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b011_0000);
     }
 
     #[test]
@@ -285,8 +329,8 @@ mod tests {
         cpu.registers.b = 0x1;
         cpu.add_dispatch(0x88);
 
-        assert_eq!(cpu.registers.a, 0xf + 0x1);
-        assert_eq!(cpu.registers.f, 0b0011000);
+        assert_eq!(cpu.registers.a, 0xe + 0x1 + 0x1);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 
     #[test]
@@ -294,13 +338,13 @@ mod tests {
         let mut cpu = Cpu::new();
         let address: usize = 0xff;
         cpu.registers.f = set_carry(cpu.registers.f);
-        cpu.memory[address] = 0xa;
+        cpu.memory[address] = 0x3;
         cpu.registers.a = 0x2;
         cpu.registers.set_hl(address as u16);
         cpu.add_dispatch(0x8e);
 
-        assert_eq!(cpu.registers.a, 0xa + 0x2 + 0x1);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.a, 0x3 + 0x2 + 0x1);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 
     #[test]
@@ -312,7 +356,7 @@ mod tests {
         cpu.add_dispatch(0x89);
 
         assert_eq!(cpu.registers.a, 0x7);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 
     #[test]
@@ -324,7 +368,7 @@ mod tests {
         cpu.add_dispatch(0x8a);
 
         assert_eq!(cpu.registers.a, 0x7);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 
     #[test]
@@ -336,7 +380,7 @@ mod tests {
         cpu.add_dispatch(0x8b);
 
         assert_eq!(cpu.registers.a, 0x7);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 
     #[test]
@@ -348,7 +392,7 @@ mod tests {
         cpu.add_dispatch(0x8c);
 
         assert_eq!(cpu.registers.a, 0x7);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 
     #[test]
@@ -360,6 +404,6 @@ mod tests {
         cpu.add_dispatch(0x8d);
 
         assert_eq!(cpu.registers.a, 0x7);
-        assert_eq!(cpu.registers.f, 0b0001000);
+        assert_eq!(cpu.registers.f, 0b001_0000);
     }
 }
