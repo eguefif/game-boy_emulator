@@ -59,6 +59,41 @@ impl Registers {
     pub fn hl(self: &mut Registers) -> u16 {
         combine(self.h as u16, self.l as u16)
     }
+    pub fn set_zero(self: &mut Registers) {
+        self.f = self.f | 0b1000_0000
+    }
+
+    pub fn set_carry(self: &mut Registers) {
+        self.f = self.f | 0b1_0000;
+    }
+
+    pub fn set_n(self: &mut Registers) {
+        self.f = self.f | 0b100_0000;
+    }
+
+    pub fn set_n_to_zero(self: &mut Registers) {
+        self.f = self.f & 0b1011_1111;
+    }
+
+    pub fn set_h(self: &mut Registers) {
+        self.f = self.f | 0b10_0000;
+    }
+
+    pub fn get_carry(self: &mut Registers) -> bool {
+        (self.f & 0b0001_0000) == 0b0001_0000
+    }
+
+    pub fn get_zero(self: &mut Registers) -> bool {
+        (self.f & 0b1000_0000) == 0b1000_0000
+    }
+
+    pub fn get_half_carry(self: &mut Registers) -> bool {
+        (self.f & 0b0010_0000) == 0b0010_0000
+    }
+
+    pub fn get_n(self: &mut Registers) -> bool {
+        (self.f & 0b0100_0000) == 0b0100_0000
+    }
 }
 
 fn combine(high: u16, low: u16) -> u16 {
@@ -72,41 +107,6 @@ fn get_high_and_low(value: u16) -> (u8, u8) {
     (high, low)
 }
 
-pub fn set_zero(f: u8) -> u8 {
-    f | 0b1000_0000
-}
-
-pub fn set_carry(f: u8) -> u8 {
-    f | 0b1_0000
-}
-
-pub fn set_n(f: u8) -> u8 {
-    f | 0b100_0000
-}
-
-pub fn set_n_to_zero(f: u8) -> u8 {
-    f & 0b1011_1111
-}
-
-pub fn set_h(f: u8) -> u8 {
-    f | 0b10_0000
-}
-
-pub fn get_carry(f: u8) -> bool {
-    (f & 0b0001_0000) == 0b0001_0000
-}
-
-pub fn get_zero(f: u8) -> bool {
-    (f & 0b1000_0000) == 0b1000_0000
-}
-
-pub fn get_half_carry(f: u8) -> bool {
-    (f & 0b0010_0000) == 0b0010_0000
-}
-
-pub fn get_n(f: u8) -> bool {
-    (f & 0b0100_0000) == 0b0100_0000
-}
 #[cfg(test)]
 mod tests {
     use super::*;
