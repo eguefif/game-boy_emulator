@@ -13,3 +13,5 @@ pub fn sub(target: &mut u8, value: u8, flags: &mut u8) {
     *flags = set_n(*flags);
     *target = res;
 }
+
+// TODO: make test here for sub instead of range_0

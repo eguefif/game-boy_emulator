@@ -1,7 +1,12 @@
 use crate::processor::{
     cpu::Cpu,
-    registers::{get_carry, set_carry, set_h, set_n, set_n_to_zero, set_zero},
+    registers::{get_carry, set_carry, set_h, set_n_to_zero, set_zero},
 };
+
+// TODO: move add function in there files with tests
+// TODO: move check overflow in there files with tests
+// TODO: test only opcode behavior and flow here
+// TODO: refactor add functions ?
 
 impl Cpu {
     pub fn add_dispatch(self: &mut Cpu, opcode: u8) {
