@@ -59,24 +59,37 @@ impl Registers {
     pub fn hl(self: &mut Registers) -> u16 {
         combine(self.h as u16, self.l as u16)
     }
+
     pub fn set_zero(self: &mut Registers) {
         self.f = self.f | 0b1000_0000
     }
 
+    pub fn unset_zero(self: &mut Registers) {
+        self.f = self.f & 0b0111_1111;
+    }
+
     pub fn set_carry(self: &mut Registers) {
-        self.f = self.f | 0b1_0000;
+        self.f = self.f | 0b0001_0000;
+    }
+
+    pub fn unset_carry(self: &mut Registers) {
+        self.f = self.f & 0b1110_1111;
     }
 
     pub fn set_n(self: &mut Registers) {
-        self.f = self.f | 0b100_0000;
+        self.f = self.f | 0b0100_0000;
     }
 
-    pub fn set_n_to_zero(self: &mut Registers) {
+    pub fn unset_n(self: &mut Registers) {
         self.f = self.f & 0b1011_1111;
     }
 
     pub fn set_h(self: &mut Registers) {
-        self.f = self.f | 0b10_0000;
+        self.f = self.f | 0b0010_0000;
+    }
+
+    pub fn unset_h(self: &mut Registers) {
+        self.f = self.f & 0b1101_1111;
     }
 
     pub fn get_carry(self: &mut Registers) -> bool {
@@ -171,17 +184,26 @@ mod tests {
 
     #[test]
     fn set_zero_flag() {
-        let f = 0;
-        let res = set_zero(f);
+        let mut registers = Registers::new();
+        registers.set_zero();
 
-        assert_eq!(0b1000_0000, res);
+        assert_eq!(0b1000_0000, registers.f);
+    }
+
+    #[test]
+    fn unset_zero_flag() {
+        let mut registers = Registers::new();
+        registers.set_zero();
+        registers.unset_zero();
+
+        assert_eq!(0b1000_0000, registers.f);
     }
 
     #[test]
     fn idempotent_if_already_set_carry_flag() {
-        let f = 0b0001_0001;
-        let res = set_carry(f);
+        let mut registers = Registers::new();
+        registers.set_carry();
 
-        assert_eq!(0b0001_0001, res);
+        assert_eq!(0b0001_0001, registers.f);
     }
 }
