@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use crate::processor::flags::Flags;
+
 #[derive(Debug)]
 pub struct Registers {
     pub a: u8,
@@ -7,7 +9,7 @@ pub struct Registers {
     pub c: u8,
     pub d: u8,
     pub e: u8,
-    pub f: u8,
+    pub f: Flags,
     pub h: u8,
     pub l: u8,
     pub pc: usize,
@@ -21,7 +23,7 @@ impl Registers {
             c: 0,
             d: 0,
             e: 0,
-            f: 0,
+            f: Flags::new(),
             h: 0,
             l: 0,
             pc: 0,
@@ -29,7 +31,7 @@ impl Registers {
     }
 
     pub fn set_af(self: &mut Registers, value: u16) {
-        (self.a, self.f) = get_high_and_low(value);
+        (self.a, self.f.f) = get_high_and_low(value);
     }
 
     pub fn set_bc(self: &mut Registers, value: u16) {
@@ -45,7 +47,7 @@ impl Registers {
     }
 
     pub fn af(self: &mut Registers) -> u16 {
-        combine(self.a as u16, self.f as u16)
+        combine(self.a as u16, self.f.f as u16)
     }
 
     pub fn bc(self: &mut Registers) -> u16 {
@@ -58,54 +60,6 @@ impl Registers {
 
     pub fn hl(self: &mut Registers) -> u16 {
         combine(self.h as u16, self.l as u16)
-    }
-
-    pub fn set_zero(self: &mut Registers) {
-        self.f = self.f | 0b1000_0000
-    }
-
-    pub fn unset_zero(self: &mut Registers) {
-        self.f = self.f & 0b0111_1111;
-    }
-
-    pub fn set_carry(self: &mut Registers) {
-        self.f = self.f | 0b0001_0000;
-    }
-
-    pub fn unset_carry(self: &mut Registers) {
-        self.f = self.f & 0b1110_1111;
-    }
-
-    pub fn set_n(self: &mut Registers) {
-        self.f = self.f | 0b0100_0000;
-    }
-
-    pub fn unset_n(self: &mut Registers) {
-        self.f = self.f & 0b1011_1111;
-    }
-
-    pub fn set_h(self: &mut Registers) {
-        self.f = self.f | 0b0010_0000;
-    }
-
-    pub fn unset_h(self: &mut Registers) {
-        self.f = self.f & 0b1101_1111;
-    }
-
-    pub fn get_carry(self: &mut Registers) -> bool {
-        (self.f & 0b0001_0000) == 0b0001_0000
-    }
-
-    pub fn get_zero(self: &mut Registers) -> bool {
-        (self.f & 0b1000_0000) == 0b1000_0000
-    }
-
-    pub fn get_half_carry(self: &mut Registers) -> bool {
-        (self.f & 0b0010_0000) == 0b0010_0000
-    }
-
-    pub fn get_n(self: &mut Registers) -> bool {
-        (self.f & 0b0100_0000) == 0b0100_0000
     }
 }
 
@@ -139,14 +93,14 @@ mod tests {
         registers.set_af(0xF301);
 
         assert_eq!(registers.a, 0xF3);
-        assert_eq!(registers.f, 0x1);
+        assert_eq!(registers.f.f, 0x1);
     }
 
     #[test]
     fn af_return_combine_a_and_f() {
         let mut registers = Registers::new();
         registers.a = 0x8;
-        registers.f = 0x1;
+        registers.f.f = 0x1;
 
         let af = registers.af();
         assert_eq!(af, 0x801);
@@ -180,30 +134,5 @@ mod tests {
 
         let hl = registers.hl();
         assert_eq!(hl, 0x8810);
-    }
-
-    #[test]
-    fn set_zero_flag() {
-        let mut registers = Registers::new();
-        registers.set_zero();
-
-        assert_eq!(0b1000_0000, registers.f);
-    }
-
-    #[test]
-    fn unset_zero_flag() {
-        let mut registers = Registers::new();
-        registers.set_zero();
-        registers.unset_zero();
-
-        assert_eq!(0b1000_0000, registers.f);
-    }
-
-    #[test]
-    fn idempotent_if_already_set_carry_flag() {
-        let mut registers = Registers::new();
-        registers.set_carry();
-
-        assert_eq!(0b0001_0001, registers.f);
     }
 }
