@@ -2,7 +2,7 @@
 use crate::processor::cpu::Cpu;
 
 impl Cpu {
-    pub fn add_u8(&mut self, to_add: u8) -> u8 {
+    fn add_u8(&mut self, to_add: u8) -> u8 {
         let (result, overflow) = self.registers.a.overflowing_add(to_add);
         self.set_flags_u8(result, self.registers.a, to_add, overflow, false);
         result
@@ -84,13 +84,43 @@ mod tests {
     }
 
     #[test]
-    fn it_add_with_no_overflow_flag() {
+    fn it_add_u8_with_no_overflow_flag() {
         let mut cpu = Cpu::new();
         cpu.registers.a = 0x1;
         let res = cpu.add_u8(0x2);
 
-        println!("in test result: {}", res);
         assert_eq!(res, 0x1 + 0x2);
         assert!(!cpu.registers.f.is_flag());
+        assert!(!cpu.registers.f.is_n());
+    }
+
+    #[test]
+    fn it_add_u8_with_overflow_flag() {
+        let mut cpu = Cpu::new();
+        cpu.registers.a = 0xFF;
+        let res = cpu.add_u8(0x1);
+
+        assert_eq!(res, 0x0);
+        assert!(cpu.registers.f.is_carry());
+        assert!(cpu.registers.f.is_zero());
+    }
+
+    #[test]
+    fn it_add_u8_with_half_overflow_flag() {
+        let mut cpu = Cpu::new();
+        cpu.registers.a = 0xF;
+        let res = cpu.add_u8(0x1);
+
+        assert_eq!(res, 0xF + 0x1);
+        assert!(cpu.registers.f.is_half_carry());
+    }
+
+    #[test]
+    fn it_add_u8_with_no_half_overflow_flag() {
+        let mut cpu = Cpu::new();
+        cpu.registers.a = 0xE;
+        cpu.add_u8(0x1);
+
+        assert!(!cpu.registers.f.is_half_carry());
     }
 }
