@@ -1,4 +1,5 @@
 pub mod cpu;
 pub mod flags;
-mod instructions;
+pub mod instructions;
+pub mod maths;
 pub mod registers;

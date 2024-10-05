@@ -1,7 +1,19 @@
-#![allow(dead_code)]
 use crate::processor::cpu::Cpu;
+use crate::processor::instructions::ArithmeticTarget;
 
 impl Cpu {
+    pub fn add_dispatch(&mut self, target: ArithmeticTarget) {
+        match target {
+            ArithmeticTarget::A => {}
+            ArithmeticTarget::B => self.registers.a = self.add_u8(self.registers.b),
+            ArithmeticTarget::C => self.registers.a = self.add_u8(self.registers.c),
+            ArithmeticTarget::D => self.registers.a = self.add_u8(self.registers.d),
+            ArithmeticTarget::E => self.registers.a = self.add_u8(self.registers.e),
+            ArithmeticTarget::L => self.registers.a = self.add_u8(self.registers.l),
+            ArithmeticTarget::H => self.registers.a = self.add_u8(self.registers.h),
+        }
+    }
+
     fn add_u8(&mut self, to_add: u8) -> u8 {
         let (result, overflow) = self.registers.a.overflowing_add(to_add);
         self.set_flags_u8(result, self.registers.a, to_add, overflow, false);
@@ -38,6 +50,7 @@ pub fn half_overflow_u8(target: u8, value: u8) -> bool {
     ((low_target_nibble + low_value_nibble) & 0x10) == 0x10
 }
 
+#[allow(dead_code)]
 pub fn half_overflow_u16(target: u16, value: u16) -> bool {
     let low_target_nibble = target & 0xFFF;
     let low_value_nibble = value & 0xFFF;

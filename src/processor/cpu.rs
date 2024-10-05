@@ -1,10 +1,12 @@
 #![allow(dead_code)]
+use crate::processor::instructions::Instruction;
 use crate::processor::registers::Registers;
 
 #[derive(Debug)]
 pub struct Cpu {
     pub registers: Registers,
     pub memory: [u8; 0xFFFF],
+    pub pc: usize,
 }
 
 impl Cpu {
@@ -12,34 +14,49 @@ impl Cpu {
         Cpu {
             registers: Registers::new(),
             memory: [0; 0xFFFF],
+            pc: 0,
         }
     }
 
     pub fn run(self: &mut Cpu) -> u8 {
+        let opcode = self.memory[self.pc];
+        self.pc += 1;
+
+        if let Some(instruction) = Instruction::from_byte(opcode) {
+            self.execute(instruction);
+        } else {
+            println!("Unknown opcode: {:#x}", opcode);
+        }
         1
     }
 
-    pub fn fetch_word(self: &mut Cpu) -> u16 {
+    fn execute(&mut self, instruction: Instruction) {
+        match instruction {
+            Instruction::Add(target) => self.add_dispatch(target),
+        }
+    }
+
+    fn fetch_word(self: &mut Cpu) -> u16 {
         let value = self.memory[self.registers.pc] as u16;
         let value_2 = self.memory[self.registers.pc + 1] as u16;
         self.registers.pc += 2;
         (value_2 << 8) | value
     }
 
-    pub fn set_word(self: &mut Cpu, value: u16) {
+    fn set_word(self: &mut Cpu, value: u16) {
         let value_1: u8 = (value >> 8) as u8;
         let value_2: u8 = (value & 0xFF) as u8;
         self.memory[self.registers.pc] = value_1;
         self.memory[self.registers.pc + 1] = value_2;
     }
 
-    pub fn fetch_byte(self: &mut Cpu) -> u8 {
+    fn fetch_byte(self: &mut Cpu) -> u8 {
         let value = self.memory[self.registers.pc];
         self.registers.pc += 1;
         value
     }
 
-    pub fn set_byte(self: &mut Cpu, value: u8) {
+    fn set_byte(self: &mut Cpu, value: u8) {
         self.memory[self.registers.pc] = value;
     }
 }
