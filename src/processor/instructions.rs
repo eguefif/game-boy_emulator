@@ -1,11 +1,22 @@
 pub enum Instruction {
     Add(ArithmeticTarget),
     AddC(ArithmeticTarget),
+    LoadB(Target),
     End,
 }
 
-#[allow(dead_code)]
 pub enum ArithmeticTarget {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    HL,
+}
+
+pub enum Target {
     A,
     B,
     C,
@@ -20,6 +31,14 @@ impl Instruction {
     pub fn from_byte(byte: u8) -> Option<Instruction> {
         match byte {
             0x00 => Some(Instruction::End),
+            0x40 => Some(Instruction::LoadB(Target::B)),
+            0x41 => Some(Instruction::LoadB(Target::C)),
+            0x42 => Some(Instruction::LoadB(Target::D)),
+            0x43 => Some(Instruction::LoadB(Target::E)),
+            0x44 => Some(Instruction::LoadB(Target::H)),
+            0x45 => Some(Instruction::LoadB(Target::L)),
+            0x46 => Some(Instruction::LoadB(Target::HL)),
+            0x47 => Some(Instruction::LoadB(Target::A)),
             0x80 => Some(Instruction::Add(ArithmeticTarget::B)),
             0x81 => Some(Instruction::Add(ArithmeticTarget::C)),
             0x82 => Some(Instruction::Add(ArithmeticTarget::D)),

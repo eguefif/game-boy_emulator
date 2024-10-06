@@ -14,7 +14,9 @@ impl MemoryBus {
     }
 
     pub fn fetch_next_instruction(&mut self) -> u8 {
-        self.fetch_byte(0)
+        let value = self.fetch_byte(0);
+        self.pc += 1;
+        value
     }
 
     pub fn fetch_word(self: &mut MemoryBus) -> u16 {
@@ -35,7 +37,6 @@ impl MemoryBus {
         let mut position = position;
         if position == 0 {
             position = self.pc;
-            self.pc += 1;
         }
         self.memory[position]
     }
@@ -80,12 +81,10 @@ mod tests {
     fn it_fetch_byte_from_memory() {
         let mut memory = MemoryBus::new();
         memory.pc = 0xFF;
-        let save_pc = memory.pc;
         memory.memory[0xFF] = 0xab;
         let res = memory.fetch_byte(0);
 
         assert_eq!(res, 0xab);
-        assert_eq!(memory.pc, save_pc + 1);
     }
 
     #[test]
