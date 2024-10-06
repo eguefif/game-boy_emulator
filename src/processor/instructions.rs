@@ -3,6 +3,7 @@ pub enum Instruction {
     AddC(ArithmeticTarget),
     LoadB(Target),
     LoadC(Target),
+    LoadD(Target),
     End,
 }
 
@@ -48,6 +49,14 @@ impl Instruction {
             0x4D => Some(Instruction::LoadC(Target::L)),
             0x4E => Some(Instruction::LoadC(Target::HL)),
             0x4F => Some(Instruction::LoadC(Target::A)),
+            0x50 => Some(Instruction::LoadD(Target::B)),
+            0x51 => Some(Instruction::LoadD(Target::C)),
+            0x52 => Some(Instruction::LoadD(Target::D)),
+            0x53 => Some(Instruction::LoadD(Target::E)),
+            0x54 => Some(Instruction::LoadD(Target::H)),
+            0x55 => Some(Instruction::LoadD(Target::L)),
+            0x56 => Some(Instruction::LoadD(Target::HL)),
+            0x57 => Some(Instruction::LoadD(Target::A)),
             0x80 => Some(Instruction::Add(ArithmeticTarget::B)),
             0x81 => Some(Instruction::Add(ArithmeticTarget::C)),
             0x82 => Some(Instruction::Add(ArithmeticTarget::D)),

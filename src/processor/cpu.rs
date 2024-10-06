@@ -40,6 +40,7 @@ impl Cpu {
             Instruction::AddC(target) => self.addc_dispatch(target),
             Instruction::LoadB(target) => self.loadb_dispatch(target),
             Instruction::LoadC(target) => self.loadc_dispatch(target),
+            Instruction::LoadD(target) => self.loadd_dispatch(target),
             Instruction::End => return true,
         }
         false
