@@ -135,4 +135,20 @@ mod tests {
         let hl = registers.hl();
         assert_eq!(hl, 0x8810);
     }
+
+    #[test]
+    fn get_high_and_low_should_return_high_and_low() {
+        let value = 0x3f0;
+        let (high, low) = get_high_and_low(value);
+        assert_eq!(high, 0x3);
+        assert_eq!(low, 0xf0);
+    }
+
+    #[test]
+    fn combine_should_return_combined_value() {
+        let high = 0x3;
+        let low = 0xf0;
+        let combined = combine(high as u16, low as u16);
+        assert_eq!(combined, 0x3f0);
+    }
 }

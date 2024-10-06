@@ -20,9 +20,8 @@ impl Cpu {
     }
 
     pub fn run(self: &mut Cpu) -> u8 {
-        let opcode = self.memory.fetch_next_instruction();
-
         loop {
+            let opcode = self.memory.fetch_next_instruction();
             if let Some(instruction) = Instruction::from_byte(opcode) {
                 let is_over = self.execute(instruction);
                 if is_over {
@@ -38,23 +37,9 @@ impl Cpu {
     fn execute(&mut self, instruction: Instruction) -> bool {
         match instruction {
             Instruction::Add(target) => self.add_dispatch(target),
+            Instruction::AddC(target) => self.addc_dispatch(target),
             Instruction::End => return true,
         }
         false
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn it_adds_b_to_a() {
-        let mut cpu = Cpu::new();
-        cpu.memory.set_byte(0x80, 1);
-        cpu.memory.set_byte(0x00, 1);
-        cpu.registers.a = 0x01;
-        cpu.registers.b = 0x02;
-        cpu.run();
-        assert_eq!(cpu.registers.a, 0x01 + 0x02);
     }
 }

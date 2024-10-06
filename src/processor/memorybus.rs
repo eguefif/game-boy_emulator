@@ -14,7 +14,7 @@ impl MemoryBus {
     }
 
     pub fn fetch_next_instruction(&mut self) -> u8 {
-        self.fetch_byte()
+        self.fetch_byte(0)
     }
 
     pub fn fetch_word(self: &mut MemoryBus) -> u16 {
@@ -31,14 +31,21 @@ impl MemoryBus {
         self.memory[self.pc + 1] = value_2;
     }
 
-    pub fn fetch_byte(self: &mut MemoryBus) -> u8 {
-        let value = self.memory[self.pc];
-        self.pc += 1;
-        value
+    pub fn fetch_byte(self: &mut MemoryBus, position: usize) -> u8 {
+        let mut position = position;
+        if position == 0 {
+            position = self.pc;
+            self.pc += 1;
+        }
+        self.memory[position]
     }
 
     pub fn set_byte(self: &mut MemoryBus, value: u8, position: usize) {
-        self.memory[self.pc + position] = value;
+        let mut position = position;
+        if position == 0 {
+            position = self.pc;
+        }
+        self.memory[position] = value;
     }
 }
 
@@ -75,7 +82,7 @@ mod tests {
         memory.pc = 0xFF;
         let save_pc = memory.pc;
         memory.memory[0xFF] = 0xab;
-        let res = memory.fetch_byte();
+        let res = memory.fetch_byte(0);
 
         assert_eq!(res, 0xab);
         assert_eq!(memory.pc, save_pc + 1);
@@ -84,9 +91,17 @@ mod tests {
     #[test]
     fn it_set_byte_from_memory() {
         let mut memory = MemoryBus::new();
+        memory.set_byte(0xf8, 0xFF);
+
+        assert_eq!(memory.memory[0xFF], 0xf8);
+    }
+
+    #[test]
+    fn it_set_byte_from_memory_from_pc() {
+        let mut memory = MemoryBus::new();
         memory.pc = 0xFF;
         memory.set_byte(0xf8, 0);
 
-        assert_eq!(memory.memory[memory.pc], 0xf8);
+        assert_eq!(memory.memory[0xFF], 0xf8);
     }
 }
