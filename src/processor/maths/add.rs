@@ -13,9 +13,7 @@ impl Cpu {
             ArithmeticTarget::H => self.registers.a = self.add_u8(self.registers.h, false),
             ArithmeticTarget::HL => {
                 let position = self.registers.hl() as usize;
-                println!("Position: {:#x}", position);
                 let addend = self.memory.fetch_byte(position);
-                println!("Addend: {:#x}", addend);
                 self.registers.a = self.add_u8(addend, false)
             }
         }
@@ -61,6 +59,9 @@ impl Cpu {
             self.registers.f.set_zero();
         } else {
             self.registers.f.unset_zero();
+        }
+        if !sub {
+            self.registers.f.unset_n();
         }
         if v1 < v2 && sub {
             self.registers.f.set_n();

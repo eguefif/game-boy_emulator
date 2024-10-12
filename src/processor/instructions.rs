@@ -1,6 +1,7 @@
 pub enum Instruction {
     Add(ArithmeticTarget),
     AddC(ArithmeticTarget),
+    And(ArithmeticTarget),
     LoadB(Target),
     LoadC(Target),
     LoadD(Target),
@@ -46,7 +47,6 @@ impl Instruction {
             0x45 => Some(Instruction::LoadB(Target::L)),
             0x46 => Some(Instruction::LoadB(Target::HL)),
             0x47 => Some(Instruction::LoadB(Target::A)),
-
             0x48 => Some(Instruction::LoadC(Target::B)),
             0x49 => Some(Instruction::LoadC(Target::C)),
             0x4A => Some(Instruction::LoadC(Target::D)),
@@ -64,7 +64,6 @@ impl Instruction {
             0x55 => Some(Instruction::LoadD(Target::L)),
             0x56 => Some(Instruction::LoadD(Target::HL)),
             0x57 => Some(Instruction::LoadD(Target::A)),
-
             0x58 => Some(Instruction::LoadE(Target::B)),
             0x59 => Some(Instruction::LoadE(Target::C)),
             0x5A => Some(Instruction::LoadE(Target::D)),
@@ -82,7 +81,6 @@ impl Instruction {
             0x65 => Some(Instruction::LoadH(Target::L)),
             0x66 => Some(Instruction::LoadH(Target::HL)),
             0x67 => Some(Instruction::LoadH(Target::A)),
-
             0x68 => Some(Instruction::LoadL(Target::B)),
             0x69 => Some(Instruction::LoadL(Target::C)),
             0x6A => Some(Instruction::LoadL(Target::D)),
@@ -99,7 +97,6 @@ impl Instruction {
             0x74 => Some(Instruction::LoadHL(Target::H)),
             0x75 => Some(Instruction::LoadHL(Target::L)),
             0x77 => Some(Instruction::LoadHL(Target::A)),
-
             0x78 => Some(Instruction::LoadA(Target::B)),
             0x79 => Some(Instruction::LoadA(Target::C)),
             0x7A => Some(Instruction::LoadA(Target::D)),
@@ -125,6 +122,15 @@ impl Instruction {
             0x8D => Some(Instruction::AddC(ArithmeticTarget::L)),
             0x8E => Some(Instruction::AddC(ArithmeticTarget::HL)),
             0x8F => Some(Instruction::AddC(ArithmeticTarget::A)),
+
+            0x90 => Some(Instruction::And(ArithmeticTarget::B)),
+            0x91 => Some(Instruction::And(ArithmeticTarget::C)),
+            0x92 => Some(Instruction::And(ArithmeticTarget::D)),
+            0x93 => Some(Instruction::And(ArithmeticTarget::E)),
+            0x94 => Some(Instruction::And(ArithmeticTarget::H)),
+            0x95 => Some(Instruction::And(ArithmeticTarget::L)),
+            0x96 => Some(Instruction::And(ArithmeticTarget::HL)),
+            0x97 => Some(Instruction::And(ArithmeticTarget::A)),
             _ => None,
         }
     }

@@ -38,6 +38,7 @@ impl Cpu {
         match instruction {
             Instruction::Add(target) => self.add_dispatch(target),
             Instruction::AddC(target) => self.addc_dispatch(target),
+            Instruction::And(target) => self.and_dispatch(target),
             Instruction::LoadA(target) => self.loada_dispatch(target),
             Instruction::LoadB(target) => self.loadb_dispatch(target),
             Instruction::LoadC(target) => self.loadc_dispatch(target),
