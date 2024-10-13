@@ -6,6 +6,7 @@ pub enum Instruction {
     And(ArithmeticTarget),
     Xor(ArithmeticTarget),
     Or(ArithmeticTarget),
+    Cp(ArithmeticTarget),
     LoadB(Target),
     LoadC(Target),
     LoadD(Target),
@@ -14,6 +15,7 @@ pub enum Instruction {
     LoadL(Target),
     LoadA(Target),
     LoadHL(Target),
+    Halt,
     End,
 }
 
@@ -101,6 +103,7 @@ impl Instruction {
             0x74 => Some(Instruction::LoadHL(Target::H)),
             0x75 => Some(Instruction::LoadHL(Target::L)),
             0x77 => Some(Instruction::LoadHL(Target::A)),
+            0x76 => Some(Instruction::Halt),
             0x78 => Some(Instruction::LoadA(Target::B)),
             0x79 => Some(Instruction::LoadA(Target::C)),
             0x7A => Some(Instruction::LoadA(Target::D)),
@@ -169,6 +172,14 @@ impl Instruction {
             0xB5 => Some(Instruction::Or(ArithmeticTarget::L)),
             0xB6 => Some(Instruction::Or(ArithmeticTarget::HL)),
             0xB7 => Some(Instruction::Or(ArithmeticTarget::A)),
+            0xB8 => Some(Instruction::Cp(ArithmeticTarget::B)),
+            0xB9 => Some(Instruction::Cp(ArithmeticTarget::C)),
+            0xBA => Some(Instruction::Cp(ArithmeticTarget::D)),
+            0xBB => Some(Instruction::Cp(ArithmeticTarget::E)),
+            0xBC => Some(Instruction::Cp(ArithmeticTarget::H)),
+            0xBD => Some(Instruction::Cp(ArithmeticTarget::L)),
+            0xBE => Some(Instruction::Cp(ArithmeticTarget::HL)),
+            0xBF => Some(Instruction::Cp(ArithmeticTarget::A)),
             _ => None,
         }
     }

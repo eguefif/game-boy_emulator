@@ -36,7 +36,7 @@ impl Cpu {
         }
     }
 
-    fn sub_u8(&mut self, to_sub: u8, carry: bool) -> u8 {
+    pub fn sub_u8(&mut self, to_sub: u8, carry: bool) -> u8 {
         let carry_value = if carry && self.registers.f.is_carry() {
             1
         } else {

@@ -8,6 +8,7 @@ pub struct Cpu {
     pub registers: Registers,
     pub memory: MemoryBus,
     pub pc: usize,
+    pub pause: bool,
 }
 
 impl Cpu {
@@ -16,19 +17,22 @@ impl Cpu {
             registers: Registers::new(),
             memory: MemoryBus::new(),
             pc: 0,
+            pause: false,
         }
     }
 
     pub fn run(self: &mut Cpu) -> u8 {
         loop {
-            let opcode = self.memory.fetch_next_instruction();
-            if let Some(instruction) = Instruction::from_byte(opcode) {
-                let is_over = self.execute(instruction);
-                if is_over {
-                    break;
+            if !self.is_halted() {
+                let opcode = self.memory.fetch_next_instruction();
+                if let Some(instruction) = Instruction::from_byte(opcode) {
+                    let is_over = self.execute(instruction);
+                    if is_over {
+                        break;
+                    }
+                } else {
+                    println!("Unknown opcode: {:#x}", opcode);
                 }
-            } else {
-                println!("Unknown opcode: {:#x}", opcode);
             }
         }
         1
@@ -36,6 +40,7 @@ impl Cpu {
 
     fn execute(&mut self, instruction: Instruction) -> bool {
         match instruction {
+            Instruction::Halt => self.halt(),
             Instruction::Add(target) => self.add_dispatch(target),
             Instruction::AddC(target) => self.addc_dispatch(target),
             Instruction::Sub(target) => self.sub_dispatch(target),
@@ -51,6 +56,7 @@ impl Cpu {
             Instruction::LoadH(target) => self.loadh_dispatch(target),
             Instruction::LoadL(target) => self.loadl_dispatch(target),
             Instruction::LoadHL(target) => self.loadhl_dispatch(target),
+            Instruction::Cp(target) => self.comp_dispatch(target),
             Instruction::End => return true,
         }
         false
