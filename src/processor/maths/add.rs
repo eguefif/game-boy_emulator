@@ -49,24 +49,16 @@ impl Cpu {
             self.registers.a,
             to_add,
             overflow1 || overflow2,
-            false,
         );
         result
     }
 
-    fn set_flags_u8(&mut self, result: u8, v1: u8, v2: u8, overflow: bool, sub: bool) {
+    fn set_flags_u8(&mut self, result: u8, v1: u8, v2: u8, overflow: bool) {
+        self.registers.f.unset_n();
         if result == 0 {
             self.registers.f.set_zero();
         } else {
             self.registers.f.unset_zero();
-        }
-        if !sub {
-            self.registers.f.unset_n();
-        }
-        if v1 < v2 && sub {
-            self.registers.f.set_n();
-        } else {
-            self.registers.f.unset_n();
         }
         if overflow {
             self.registers.f.set_carry();
