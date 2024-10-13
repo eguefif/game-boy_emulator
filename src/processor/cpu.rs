@@ -39,6 +39,8 @@ impl Cpu {
             Instruction::Add(target) => self.add_dispatch(target),
             Instruction::AddC(target) => self.addc_dispatch(target),
             Instruction::And(target) => self.and_dispatch(target),
+            Instruction::Xor(target) => self.xor_dispatch(target),
+            Instruction::Or(target) => self.or_dispatch(target),
             Instruction::LoadA(target) => self.loada_dispatch(target),
             Instruction::LoadB(target) => self.loadb_dispatch(target),
             Instruction::LoadC(target) => self.loadc_dispatch(target),
