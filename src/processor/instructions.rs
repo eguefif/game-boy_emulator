@@ -17,6 +17,7 @@ pub enum Instruction {
     LoadA(Target),
     LoadHL(Target),
     Load16(Load16Target),
+    Load8(Target),
     LoadByteA(ByteTarget),
     Halt,
     Nop,
@@ -67,15 +68,19 @@ impl Instruction {
 
             0x01 => Some(Instruction::Load16(Load16Target::BC)),
             0x02 => Some(Instruction::LoadByteA(ByteTarget::BC)),
+            0x06 => Some(Instruction::Load8(Target::B)),
 
             0x11 => Some(Instruction::Load16(Load16Target::DE)),
             0x12 => Some(Instruction::LoadByteA(ByteTarget::DE)),
+            0x16 => Some(Instruction::Load8(Target::D)),
 
             0x21 => Some(Instruction::Load16(Load16Target::HL)),
             0x22 => Some(Instruction::LoadByteA(ByteTarget::HLp)),
+            0x26 => Some(Instruction::Load8(Target::H)),
 
             0x31 => Some(Instruction::Load16(Load16Target::SP)),
             0x32 => Some(Instruction::LoadByteA(ByteTarget::HLm)),
+            0x36 => Some(Instruction::Load8(Target::HL)),
 
             0x40 => Some(Instruction::LoadB(Target::B)),
             0x41 => Some(Instruction::LoadB(Target::C)),

@@ -56,6 +56,7 @@ impl Cpu {
             Instruction::LoadL(target) => self.loadl_dispatch(target),
             Instruction::LoadHL(target) => self.loadhl_dispatch(target),
             Instruction::Load16(target) => self.load16_dispatch(target),
+            Instruction::Load8(target) => self.load8_dispatch(target),
             Instruction::LoadByteA(target) => self.loadbytea_dispatch(target),
 
             Instruction::Cp(target) => self.comp_dispatch(target),
