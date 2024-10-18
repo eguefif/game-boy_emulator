@@ -8,6 +8,16 @@ impl Cpu {
             Load16Target::DE => self.registers.set_de(self.memory.fetch_next_word()),
             Load16Target::HL => self.registers.set_hl(self.memory.fetch_next_word()),
             Load16Target::SP => self.registers.set_sp(self.memory.fetch_next_word()),
+            Load16Target::A16A =>{
+                let position = self.memory.fetch_next_word();
+                let value: u8 = self.registers.a;
+                self.memory.set_byte(value, position as usize);
+            }
+            Load16Target::AA16 =>{
+                let position = self.memory.fetch_next_word();
+                let value: u8 = self.memory.fetch_byte(position as usize);
+                self.registers.a = value;
+            }
         }
     }
 }
@@ -22,23 +32,23 @@ mod tests {
         cpu.memory.set_byte(0xFA, 0);
         cpu.memory.set_byte(0xFF, 0x1);
         cpu.memory.set_byte(0x55, 0x2);
-        cpu.memory.set_byte(0x13, 0x2000);
+        cpu.memory.set_byte(0x13, 0x55FF);
 
         cpu.run();
 
-        assert_eq!(cpu.registers.a, 0x14)
+        assert_eq!(cpu.registers.a, 0x13)
     }
     #[test]
     fn it_should_load_a_from_memory_to_16() {
         let mut cpu = Cpu::new();
         cpu.memory.set_byte(0xEA, 0);
-        cpu.memory.set_byte(0xFA, 0x55);
-        cpu.memory.set_byte(0x55, 0xFF);
+        cpu.memory.set_byte(0x55, 0x1);
+        cpu.memory.set_byte(0xFF, 0x2);
         cpu.registers.a = 0x13;
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_word(0xFF55), 0x14)
+        assert_eq!(cpu.memory.fetch_byte(0xFF55), 0x13)
     }
 
     #[test]

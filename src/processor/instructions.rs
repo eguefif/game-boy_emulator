@@ -68,6 +68,8 @@ pub enum Load16Target {
     DE,
     HL,
     SP,
+    A16A,
+    AA16
 }
 
 pub enum ByteTarget {
@@ -246,9 +248,11 @@ impl Instruction {
 
             0xE0 => Some(Instruction::Load8(TargetLd8::A8A)),
             0xE2 => Some(Instruction::Load8(TargetLd8::C8A)),
+            0xEA => Some(Instruction::Load16(Load16Target::A16A)),
 
             0xF0 => Some(Instruction::Load8(TargetLd8::AA8)),
             0xF2 => Some(Instruction::Load8(TargetLd8::AC8)),
+            0xFA => Some(Instruction::Load16(Load16Target::AA16)),
             _ => None,
         }
     }
