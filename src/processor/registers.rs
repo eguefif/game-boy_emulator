@@ -93,7 +93,7 @@ mod tests {
         registers.set_af(0xF301);
 
         assert_eq!(registers.a, 0xF3);
-        assert_eq!(registers.f.f, 0x1);
+        assert_eq!(registers.f.f, 0x01);
     }
 
     #[test]
@@ -139,9 +139,10 @@ mod tests {
     #[test]
     fn get_high_and_low_should_return_high_and_low() {
         let value = 0x3f0;
-        let (high, low) = get_high_and_low(value);
-        assert_eq!(high, 0x3);
-        assert_eq!(low, 0xf0);
+        let (low, high) = get_high_and_low(value);
+
+        assert_eq!(high, 0xf0);
+        assert_eq!(low, 0x3);
     }
 
     #[test]
@@ -149,6 +150,7 @@ mod tests {
         let high = 0x3;
         let low = 0xf0;
         let combined = combine(high as u16, low as u16);
+
         assert_eq!(combined, 0x3f0);
     }
 }

@@ -8,7 +8,7 @@ pub struct MemoryBus {
 impl MemoryBus {
     pub fn new() -> MemoryBus {
         MemoryBus {
-            memory: [0; 0xFFFF],
+            memory: [0xFC; 0xFFFF],
             pc: 0,
         }
     }
@@ -19,11 +19,11 @@ impl MemoryBus {
         value
     }
 
-    pub fn fetch_word(self: &mut MemoryBus) -> u16 {
-        let value = self.memory[self.pc] as u16;
-        let value_2 = self.memory[self.pc + 1] as u16;
+    pub fn fetch_next_word(self: &mut MemoryBus) -> u16 {
+        let low = self.memory[self.pc] as u16;
+        let high = self.memory[self.pc + 1] as u16;
         self.pc += 2;
-        (value_2 << 8) | value
+        (high << 8) | low
     }
 
     pub fn set_word(self: &mut MemoryBus, value: u16) {
@@ -55,13 +55,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_fetch_word_from_memory() {
+    fn it_fetch_next_word_from_memory() {
         let mut memory = MemoryBus::new();
         memory.pc = 0xFF;
         let save_pc = memory.pc;
         memory.memory[0xFF] = 0xab;
         memory.memory[0xFF + 1] = 0xa0;
-        let res = memory.fetch_word();
+        let res = memory.fetch_next_word();
 
         assert_eq!(res, 0xa0ab);
         assert_eq!(memory.pc, save_pc + 2);

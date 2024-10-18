@@ -7,7 +7,6 @@ use crate::processor::registers::Registers;
 pub struct Cpu {
     pub registers: Registers,
     pub memory: MemoryBus,
-    pub pc: usize,
     pub pause: bool,
 }
 
@@ -16,7 +15,6 @@ impl Cpu {
         Cpu {
             registers: Registers::new(),
             memory: MemoryBus::new(),
-            pc: 0,
             pause: false,
         }
     }
@@ -56,8 +54,10 @@ impl Cpu {
             Instruction::LoadH(target) => self.loadh_dispatch(target),
             Instruction::LoadL(target) => self.loadl_dispatch(target),
             Instruction::LoadHL(target) => self.loadhl_dispatch(target),
+            Instruction::Load16(target) => self.load16_dispatch(target),
             Instruction::Cp(target) => self.comp_dispatch(target),
-            Instruction::End => return true,
+            Instruction::Nop => self.registers.pc += 1,
+            Instruction::Exit => return true,
         }
         false
     }

@@ -1,4 +1,5 @@
 pub enum Instruction {
+    Exit,
     Add(ArithmeticTarget),
     AddC(ArithmeticTarget),
     Sub(ArithmeticTarget),
@@ -15,8 +16,9 @@ pub enum Instruction {
     LoadL(Target),
     LoadA(Target),
     LoadHL(Target),
+    Load16(Load16Target),
     Halt,
-    End,
+    Nop,
 }
 
 pub enum ArithmeticTarget {
@@ -41,10 +43,25 @@ pub enum Target {
     HL,
 }
 
+pub enum Load16Target {
+    BC,
+    DE,
+    HL,
+    SP,
+}
+
 impl Instruction {
     pub fn from_byte(byte: u8) -> Option<Instruction> {
         match byte {
-            0x00 => Some(Instruction::End),
+            0xFC => Some(Instruction::Exit),
+
+            0x00 => Some(Instruction::Nop),
+
+            0x01 => Some(Instruction::Load16(Load16Target::BC)),
+            0x11 => Some(Instruction::Load16(Load16Target::DE)),
+            0x21 => Some(Instruction::Load16(Load16Target::HL)),
+            0x31 => Some(Instruction::Load16(Load16Target::SP)),
+
             0x40 => Some(Instruction::LoadB(Target::B)),
             0x41 => Some(Instruction::LoadB(Target::C)),
             0x42 => Some(Instruction::LoadB(Target::D)),

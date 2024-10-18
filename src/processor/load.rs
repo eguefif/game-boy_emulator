@@ -1,3 +1,4 @@
+pub mod load16;
 pub mod loada;
 pub mod loadb;
 pub mod loadc;
