@@ -21,6 +21,14 @@ impl Cpu {
                 let position: usize = (0xFF << 8) | position_a8 as usize;
                 self.memory.set_byte(self.registers.a, position);
             }
+            TargetLd8::AC8 => {
+                let position: usize = (0xFF << 8) | self.registers.c as usize;
+                self.registers.a = self.memory.fetch_byte(position);
+            }
+            TargetLd8::C8A => {
+                let position: usize = (0xFF << 8) | self.registers.c as usize;
+                self.memory.set_byte(self.registers.a, position);
+            }
             TargetLd8::HL => {
                 let position = self.registers.hl() as usize;
                 let value = self.memory.fetch_byte(0);
@@ -55,6 +63,29 @@ impl Cpu {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn it_should_move_a_to_c8() {
+        let mut cpu = Cpu::new();
+        cpu.memory.set_byte(0xE2, 0);
+        cpu.registers.a = 0x13;
+        cpu.registers.c = 0x5;
+
+        cpu.run();
+        assert_eq!(cpu.memory.fetch_byte(0xFF05), 0x13);
+    }
+
+    #[test]
+    fn it_should_move_c8_to_a() {
+        let mut cpu = Cpu::new();
+        cpu.memory.set_byte(0xF2, 0);
+        cpu.registers.c = 0x5;
+        cpu.memory.set_byte(0x13, 0xFF05);
+
+        cpu.run();
+        assert_eq!(cpu.registers.a, 0x13);
+    }
+
 
     #[test]
     fn it_should_move_a_to_a8() {
