@@ -17,6 +17,31 @@ mod tests {
     use super::*;
 
     #[test]
+    fn it_should_load_16_from_memory_to_a() {
+        let mut cpu = Cpu::new();
+        cpu.memory.set_byte(0xFA, 0);
+        cpu.memory.set_byte(0xFF, 0x1);
+        cpu.memory.set_byte(0x55, 0x2);
+        cpu.memory.set_byte(0x13, 0x2000);
+
+        cpu.run();
+
+        assert_eq!(cpu.registers.a, 0x14)
+    }
+    #[test]
+    fn it_should_load_a_from_memory_to_16() {
+        let mut cpu = Cpu::new();
+        cpu.memory.set_byte(0xEA, 0);
+        cpu.memory.set_byte(0xFA, 0x55);
+        cpu.memory.set_byte(0x55, 0xFF);
+        cpu.registers.a = 0x13;
+
+        cpu.run();
+
+        assert_eq!(cpu.memory.fetch_word(0xFF55), 0x14)
+    }
+
+    #[test]
     fn it_should_load_16_from_memory_to_bc() {
         let mut cpu = Cpu::new();
         cpu.memory.set_byte(0x01, 0);

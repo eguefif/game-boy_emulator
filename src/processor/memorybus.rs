@@ -26,6 +26,13 @@ impl MemoryBus {
         (high << 8) | low
     }
 
+    pub fn fetch_word(self: &mut MemoryBus, position: usize) -> u16 {
+        let low = self.memory[position] as u16;
+        let high = self.memory[position + 1] as u16;
+        self.pc += 2;
+        (high << 8) | low
+    }
+
     pub fn set_word(self: &mut MemoryBus, value: u16) {
         let value_1: u8 = (value >> 8) as u8;
         let value_2: u8 = (value & 0xFF) as u8;
