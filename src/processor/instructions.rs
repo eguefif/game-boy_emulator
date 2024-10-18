@@ -58,6 +58,8 @@ pub enum TargetLd8 {
     Ade,
     AHLp,
     AHLm,
+    A8A,
+    AA8,
 }
 pub enum Load16Target {
     BC,
@@ -239,6 +241,10 @@ impl Instruction {
             0xBD => Some(Instruction::Cp(ArithmeticTarget::L)),
             0xBE => Some(Instruction::Cp(ArithmeticTarget::HL)),
             0xBF => Some(Instruction::Cp(ArithmeticTarget::A)),
+
+            0xE0 => Some(Instruction::Load8(TargetLd8::A8A)),
+
+            0xF0 => Some(Instruction::Load8(TargetLd8::AA8)),
             _ => None,
         }
     }
