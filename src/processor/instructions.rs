@@ -17,7 +17,7 @@ pub enum Instruction {
     LoadA(Target),
     LoadHL(Target),
     Load16(Load16Target),
-    Load8(Target),
+    Load8(TargetLd8),
     LoadByteA(ByteTarget),
     Halt,
     Nop,
@@ -45,6 +45,20 @@ pub enum Target {
     HL,
 }
 
+pub enum TargetLd8 {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    HL,
+    Abc,
+    Ade,
+    AHLp,
+    AHLm,
+}
 pub enum Load16Target {
     BC,
     DE,
@@ -68,19 +82,27 @@ impl Instruction {
 
             0x01 => Some(Instruction::Load16(Load16Target::BC)),
             0x02 => Some(Instruction::LoadByteA(ByteTarget::BC)),
-            0x06 => Some(Instruction::Load8(Target::B)),
+            0x06 => Some(Instruction::Load8(TargetLd8::B)),
+            0x0A => Some(Instruction::Load8(TargetLd8::Abc)),
+            0x0E => Some(Instruction::Load8(TargetLd8::C)),
 
             0x11 => Some(Instruction::Load16(Load16Target::DE)),
             0x12 => Some(Instruction::LoadByteA(ByteTarget::DE)),
-            0x16 => Some(Instruction::Load8(Target::D)),
+            0x16 => Some(Instruction::Load8(TargetLd8::D)),
+            0x1A => Some(Instruction::Load8(TargetLd8::Ade)),
+            0x1E => Some(Instruction::Load8(TargetLd8::E)),
 
             0x21 => Some(Instruction::Load16(Load16Target::HL)),
             0x22 => Some(Instruction::LoadByteA(ByteTarget::HLp)),
-            0x26 => Some(Instruction::Load8(Target::H)),
+            0x26 => Some(Instruction::Load8(TargetLd8::H)),
+            0x2A => Some(Instruction::Load8(TargetLd8::AHLp)),
+            0x2E => Some(Instruction::Load8(TargetLd8::L)),
 
             0x31 => Some(Instruction::Load16(Load16Target::SP)),
             0x32 => Some(Instruction::LoadByteA(ByteTarget::HLm)),
-            0x36 => Some(Instruction::Load8(Target::HL)),
+            0x36 => Some(Instruction::Load8(TargetLd8::HL)),
+            0x3A => Some(Instruction::Load8(TargetLd8::AHLm)),
+            0x3E => Some(Instruction::Load8(TargetLd8::A)),
 
             0x40 => Some(Instruction::LoadB(Target::B)),
             0x41 => Some(Instruction::LoadB(Target::C)),
