@@ -7,3 +7,4 @@ pub mod loade;
 pub mod loadh;
 pub mod loadhl;
 pub mod loadl;
+pub mod loadword;

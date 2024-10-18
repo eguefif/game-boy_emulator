@@ -13,6 +13,7 @@ pub struct Registers {
     pub h: u8,
     pub l: u8,
     pub pc: usize,
+    pub sp: usize,
 }
 
 impl Registers {
@@ -27,7 +28,12 @@ impl Registers {
             h: 0,
             l: 0,
             pc: 0,
+            sp: 0,
         }
+    }
+
+    pub fn set_sp(self: &mut Registers, value: u16) {
+        self.sp = value as usize;
     }
 
     pub fn set_af(self: &mut Registers, value: u16) {

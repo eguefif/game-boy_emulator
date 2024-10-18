@@ -46,6 +46,7 @@ impl Cpu {
             Instruction::And(target) => self.and_dispatch(target),
             Instruction::Xor(target) => self.xor_dispatch(target),
             Instruction::Or(target) => self.or_dispatch(target),
+
             Instruction::LoadA(target) => self.loada_dispatch(target),
             Instruction::LoadB(target) => self.loadb_dispatch(target),
             Instruction::LoadC(target) => self.loadc_dispatch(target),
@@ -55,6 +56,8 @@ impl Cpu {
             Instruction::LoadL(target) => self.loadl_dispatch(target),
             Instruction::LoadHL(target) => self.loadhl_dispatch(target),
             Instruction::Load16(target) => self.load16_dispatch(target),
+            Instruction::LoadByteA(target) => self.loadbytea_dispatch(target),
+
             Instruction::Cp(target) => self.comp_dispatch(target),
             Instruction::Nop => self.registers.pc += 1,
             Instruction::Exit => return true,
