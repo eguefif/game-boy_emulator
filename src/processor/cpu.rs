@@ -39,6 +39,8 @@ impl Cpu {
     fn execute(&mut self, instruction: Instruction) -> bool {
         match instruction {
             Instruction::Halt => self.halt(),
+            Instruction::Daa() => self.daa(),
+            Instruction::Scf() => self.scf(),
             Instruction::Add(target) => self.add_dispatch(target),
             Instruction::AddC(target) => self.addc_dispatch(target),
             Instruction::Sub(target) => self.sub_dispatch(target),

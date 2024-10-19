@@ -21,6 +21,8 @@ pub enum Instruction {
     LoadByteA(ByteTarget),
     Halt,
     Nop,
+    Daa(),
+    Scf(),
 }
 
 pub enum ArithmeticTarget {
@@ -69,7 +71,7 @@ pub enum Load16Target {
     HL,
     SP,
     A16A,
-    AA16
+    AA16,
 }
 
 pub enum ByteTarget {
@@ -101,12 +103,14 @@ impl Instruction {
             0x21 => Some(Instruction::Load16(Load16Target::HL)),
             0x22 => Some(Instruction::LoadByteA(ByteTarget::HLp)),
             0x26 => Some(Instruction::Load8(TargetLd8::H)),
+            0x27 => Some(Instruction::Daa()),
             0x2A => Some(Instruction::Load8(TargetLd8::AHLp)),
             0x2E => Some(Instruction::Load8(TargetLd8::L)),
 
             0x31 => Some(Instruction::Load16(Load16Target::SP)),
             0x32 => Some(Instruction::LoadByteA(ByteTarget::HLm)),
             0x36 => Some(Instruction::Load8(TargetLd8::HL)),
+            0x37 => Some(Instruction::Scf()),
             0x3A => Some(Instruction::Load8(TargetLd8::AHLm)),
             0x3E => Some(Instruction::Load8(TargetLd8::A)),
 
