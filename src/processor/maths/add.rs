@@ -36,7 +36,7 @@ impl Cpu {
         }
     }
 
-    fn add_u8(&mut self, to_add: u8, carry: bool) -> u8 {
+    pub fn add_u8(&mut self, to_add: u8, carry: bool) -> u8 {
         let carry_value = if carry && self.registers.f.is_carry() {
             1
         } else {
@@ -44,12 +44,7 @@ impl Cpu {
         };
         let (tmp, overflow1) = self.registers.a.overflowing_add(carry_value);
         let (result, overflow2) = tmp.overflowing_add(to_add);
-        self.set_flags_u8(
-            result,
-            self.registers.a,
-            to_add,
-            overflow1 || overflow2,
-        );
+        self.set_flags_u8(result, self.registers.a, to_add, overflow1 || overflow2);
         result
     }
 

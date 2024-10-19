@@ -23,6 +23,21 @@ pub enum Instruction {
     Nop,
     Daa(),
     Scf(),
+    Inc(IncTarget),
+}
+pub enum IncTarget {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    BC,
+    DE,
+    SP,
+    HL,
+    HLFlags,
 }
 
 pub enum ArithmeticTarget {
@@ -90,18 +105,21 @@ impl Instruction {
 
             0x01 => Some(Instruction::Load16(Load16Target::BC)),
             0x02 => Some(Instruction::LoadByteA(ByteTarget::BC)),
+            0x03 => Some(Instruction::Inc(IncTarget::BC)),
             0x06 => Some(Instruction::Load8(TargetLd8::B)),
             0x0A => Some(Instruction::Load8(TargetLd8::Abc)),
             0x0E => Some(Instruction::Load8(TargetLd8::C)),
 
             0x11 => Some(Instruction::Load16(Load16Target::DE)),
             0x12 => Some(Instruction::LoadByteA(ByteTarget::DE)),
+            0x13 => Some(Instruction::Inc(IncTarget::DE)),
             0x16 => Some(Instruction::Load8(TargetLd8::D)),
             0x1A => Some(Instruction::Load8(TargetLd8::Ade)),
             0x1E => Some(Instruction::Load8(TargetLd8::E)),
 
             0x21 => Some(Instruction::Load16(Load16Target::HL)),
             0x22 => Some(Instruction::LoadByteA(ByteTarget::HLp)),
+            0x23 => Some(Instruction::Inc(IncTarget::HL)),
             0x26 => Some(Instruction::Load8(TargetLd8::H)),
             0x27 => Some(Instruction::Daa()),
             0x2A => Some(Instruction::Load8(TargetLd8::AHLp)),
@@ -109,6 +127,7 @@ impl Instruction {
 
             0x31 => Some(Instruction::Load16(Load16Target::SP)),
             0x32 => Some(Instruction::LoadByteA(ByteTarget::HLm)),
+            0x33 => Some(Instruction::Inc(IncTarget::SP)),
             0x36 => Some(Instruction::Load8(TargetLd8::HL)),
             0x37 => Some(Instruction::Scf()),
             0x3A => Some(Instruction::Load8(TargetLd8::AHLm)),
