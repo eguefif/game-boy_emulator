@@ -53,10 +53,6 @@ impl MemoryBus {
     }
 
     pub fn set_byte(self: &mut MemoryBus, value: u8, position: usize) {
-        let mut position = position;
-        if position == 0 {
-            position = self.pc;
-        }
         self.memory[position] = value;
     }
 }
@@ -112,15 +108,6 @@ mod tests {
     fn it_set_byte_from_memory() {
         let mut memory = MemoryBus::new();
         memory.set_byte(0xf8, 0xFF);
-
-        assert_eq!(memory.memory[0xFF], 0xf8);
-    }
-
-    #[test]
-    fn it_set_byte_from_memory_from_pc() {
-        let mut memory = MemoryBus::new();
-        memory.pc = 0xFF;
-        memory.set_byte(0xf8, 0);
 
         assert_eq!(memory.memory[0xFF], 0xf8);
     }
