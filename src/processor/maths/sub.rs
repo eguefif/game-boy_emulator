@@ -75,7 +75,7 @@ fn underflow_u8(v1: u8, v2: u8, carry: bool) -> bool {
     (v1 as u16) < (v2 as u16 - carry as u16)
 }
 
-fn half_underflow_u8(v1: u8, v2: u8, carry: bool) -> bool {
+pub fn half_underflow_u8(v1: u8, v2: u8, carry: bool) -> bool {
     let first_nibble_v1 = v1 & 0xF;
     let first_nibble_v2 = v2 & 0xF;
     first_nibble_v1 < (first_nibble_v2 - carry as u8)
