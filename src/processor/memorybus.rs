@@ -14,9 +14,7 @@ impl MemoryBus {
     }
 
     pub fn fetch_next_instruction(&mut self) -> u8 {
-        let value = self.fetch_next_byte();
-        self.move_pc_by(1);
-        value
+        self.fetch_next_byte()
     }
 
     fn move_pc_by(&mut self, to_add: usize) {
