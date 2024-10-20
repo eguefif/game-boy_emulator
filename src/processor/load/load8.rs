@@ -4,26 +4,26 @@ use crate::processor::instructions::TargetLd8;
 impl Cpu {
     pub fn load8_dispatch(&mut self, target: TargetLd8) {
         match target {
-            TargetLd8::A => self.registers.a = self.memory.fetch_byte(0),
-            TargetLd8::B => self.registers.b = self.memory.fetch_byte(0),
-            TargetLd8::C => self.registers.c = self.memory.fetch_byte(0),
-            TargetLd8::D => self.registers.d = self.memory.fetch_byte(0),
-            TargetLd8::E => self.registers.e = self.memory.fetch_byte(0),
-            TargetLd8::H => self.registers.h = self.memory.fetch_byte(0),
-            TargetLd8::L => self.registers.l = self.memory.fetch_byte(0),
+            TargetLd8::A => self.registers.a = self.memory.fetch_next_byte(),
+            TargetLd8::B => self.registers.b = self.memory.fetch_next_byte(),
+            TargetLd8::C => self.registers.c = self.memory.fetch_next_byte(),
+            TargetLd8::D => self.registers.d = self.memory.fetch_next_byte(),
+            TargetLd8::E => self.registers.e = self.memory.fetch_next_byte(),
+            TargetLd8::H => self.registers.h = self.memory.fetch_next_byte(),
+            TargetLd8::L => self.registers.l = self.memory.fetch_next_byte(),
             TargetLd8::AA8 => {
-                let position_a8 = self.memory.fetch_byte(0);
+                let position_a8 = self.memory.fetch_next_byte();
                 let position: usize = (0xFF << 8) | position_a8 as usize;
-                self.registers.a = self.memory.fetch_byte(position);
+                self.registers.a = self.memory.fetch_byte_at(position);
             }
             TargetLd8::A8A => {
-                let position_a8 = self.memory.fetch_byte(0);
+                let position_a8 = self.memory.fetch_next_byte();
                 let position: usize = (0xFF << 8) | position_a8 as usize;
                 self.memory.set_byte(self.registers.a, position);
             }
             TargetLd8::AC8 => {
                 let position: usize = (0xFF << 8) | self.registers.c as usize;
-                self.registers.a = self.memory.fetch_byte(position);
+                self.registers.a = self.memory.fetch_byte_at(position);
             }
             TargetLd8::C8A => {
                 let position: usize = (0xFF << 8) | self.registers.c as usize;
@@ -31,29 +31,29 @@ impl Cpu {
             }
             TargetLd8::HL => {
                 let position = self.registers.hl() as usize;
-                let value = self.memory.fetch_byte(0);
+                let value = self.memory.fetch_next_byte();
                 self.memory.set_byte(value, position);
             }
             TargetLd8::AHLp => {
                 let position = self.registers.hl() as usize;
-                let value = self.memory.fetch_byte(position);
+                let value = self.memory.fetch_byte_at(position);
                 self.registers.set_hl((position + 1) as u16);
                 self.registers.a = value;
             }
             TargetLd8::AHLm => {
                 let position = self.registers.hl() as usize;
-                let value = self.memory.fetch_byte(position);
+                let value = self.memory.fetch_byte_at(position);
                 self.registers.set_hl((position - 1) as u16);
                 self.registers.a = value;
             }
             TargetLd8::Abc => {
                 let position = self.registers.bc() as usize;
-                let value = self.memory.fetch_byte(position);
+                let value = self.memory.fetch_byte_at(position);
                 self.registers.a = value;
             }
             TargetLd8::Ade => {
                 let position = self.registers.de() as usize;
-                let value = self.memory.fetch_byte(position);
+                let value = self.memory.fetch_byte_at(position);
                 self.registers.a = value;
             }
         }
@@ -72,7 +72,7 @@ mod tests {
         cpu.registers.c = 0x5;
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0xFF05), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0xFF05), 0x13);
     }
 
     #[test]
@@ -86,7 +86,6 @@ mod tests {
         assert_eq!(cpu.registers.a, 0x13);
     }
 
-
     #[test]
     fn it_should_move_a_to_a8() {
         let mut cpu = Cpu::new();
@@ -95,7 +94,7 @@ mod tests {
         cpu.registers.a = 0x13;
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0xFF05), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0xFF05), 0x13);
     }
 
     #[test]
@@ -233,6 +232,6 @@ mod tests {
         cpu.registers.set_hl(0x5);
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0x5), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0x5), 0x13);
     }
 }

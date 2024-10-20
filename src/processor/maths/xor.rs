@@ -13,7 +13,7 @@ impl Cpu {
             ArithmeticTarget::L => self.registers.a ^= self.registers.l,
             ArithmeticTarget::HL => {
                 let position = self.registers.hl() as usize;
-                let value = self.memory.fetch_byte(position);
+                let value = self.memory.fetch_byte_at(position);
                 self.registers.a ^= value;
             }
         }

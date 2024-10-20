@@ -13,7 +13,7 @@ impl Cpu {
             ArithmeticTarget::H => self.registers.a = self.sub_u8(self.registers.h, false),
             ArithmeticTarget::HL => {
                 let position = self.registers.hl() as usize;
-                let addend = self.memory.fetch_byte(position);
+                let addend = self.memory.fetch_byte_at(position);
                 self.registers.a = self.sub_u8(addend, false)
             }
         }
@@ -30,7 +30,7 @@ impl Cpu {
             ArithmeticTarget::H => self.registers.a = self.sub_u8(self.registers.h, true),
             ArithmeticTarget::HL => {
                 let position = self.registers.hl() as usize;
-                let addend = self.memory.fetch_byte(position);
+                let addend = self.memory.fetch_byte_at(position);
                 self.registers.a = self.sub_u8(addend, true)
             }
         }

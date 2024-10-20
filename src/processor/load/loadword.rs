@@ -34,7 +34,7 @@ mod tests {
         cpu.registers.a = 0x13;
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0x12), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0x12), 0x13);
     }
     #[test]
     fn it_should_load_a_to_de() {
@@ -44,7 +44,7 @@ mod tests {
         cpu.registers.a = 0x13;
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0x12), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0x12), 0x13);
     }
 
     #[test]
@@ -55,7 +55,7 @@ mod tests {
         cpu.registers.a = 0x13;
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0x12), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0x12), 0x13);
         assert_eq!(cpu.registers.hl(), 0x12 + 1);
     }
 
@@ -67,7 +67,7 @@ mod tests {
         cpu.registers.a = 0x13;
 
         cpu.run();
-        assert_eq!(cpu.memory.fetch_byte(0x12), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(0x12), 0x13);
         assert_eq!(cpu.registers.hl(), 0x12 - 0x1);
     }
 }

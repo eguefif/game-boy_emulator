@@ -13,7 +13,7 @@ impl Cpu {
             Target::L => self.registers.d = self.registers.l,
             Target::HL => {
                 let position = self.registers.hl() as usize;
-                self.registers.d = self.memory.fetch_byte(position);
+                self.registers.d = self.memory.fetch_byte_at(position);
             }
         }
     }

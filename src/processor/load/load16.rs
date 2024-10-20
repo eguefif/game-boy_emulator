@@ -8,14 +8,14 @@ impl Cpu {
             Load16Target::DE => self.registers.set_de(self.memory.fetch_next_word()),
             Load16Target::HL => self.registers.set_hl(self.memory.fetch_next_word()),
             Load16Target::SP => self.registers.set_sp(self.memory.fetch_next_word()),
-            Load16Target::A16A =>{
+            Load16Target::A16A => {
                 let position = self.memory.fetch_next_word();
                 let value: u8 = self.registers.a;
                 self.memory.set_byte(value, position as usize);
             }
-            Load16Target::AA16 =>{
+            Load16Target::AA16 => {
                 let position = self.memory.fetch_next_word();
-                let value: u8 = self.memory.fetch_byte(position as usize);
+                let value: u8 = self.memory.fetch_byte_at(position as usize);
                 self.registers.a = value;
             }
         }
@@ -48,7 +48,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(0xFF55), 0x13)
+        assert_eq!(cpu.memory.fetch_byte_at(0xFF55), 0x13)
     }
 
     #[test]

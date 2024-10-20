@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub enum Instruction {
     Exit,
     Add(ArithmeticTarget),
@@ -106,6 +108,7 @@ impl Instruction {
             0x01 => Some(Instruction::Load16(Load16Target::BC)),
             0x02 => Some(Instruction::LoadByteA(ByteTarget::BC)),
             0x03 => Some(Instruction::Inc(IncTarget::BC)),
+            0x04 => Some(Instruction::Inc(IncTarget::B)),
             0x06 => Some(Instruction::Load8(TargetLd8::B)),
             0x0A => Some(Instruction::Load8(TargetLd8::Abc)),
             0x0E => Some(Instruction::Load8(TargetLd8::C)),

@@ -31,7 +31,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(position), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(position), 0x13);
     }
 
     #[test]
@@ -44,7 +44,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(position), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(position), 0x13);
     }
 
     #[test]
@@ -57,7 +57,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(position), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(position), 0x13);
     }
 
     #[test]
@@ -70,7 +70,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(position), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(position), 0x13);
     }
 
     #[test]
@@ -83,7 +83,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(position), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(position), 0x13);
     }
 
     #[test]
@@ -95,7 +95,7 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(cpu.registers.hl() as usize), 0x15);
+        assert_eq!(cpu.memory.fetch_byte_at(cpu.registers.hl() as usize), 0x15);
     }
 
     #[test]
@@ -107,6 +107,6 @@ mod tests {
 
         cpu.run();
 
-        assert_eq!(cpu.memory.fetch_byte(cpu.registers.hl() as usize), 0x13);
+        assert_eq!(cpu.memory.fetch_byte_at(cpu.registers.hl() as usize), 0x13);
     }
 }

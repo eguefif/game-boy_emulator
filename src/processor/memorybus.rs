@@ -14,22 +14,26 @@ impl MemoryBus {
     }
 
     pub fn fetch_next_instruction(&mut self) -> u8 {
-        let value = self.fetch_byte(0);
-        self.pc += 1;
+        let value = self.fetch_next_byte();
+        self.move_pc_by(1);
         value
+    }
+
+    fn move_pc_by(&mut self, to_add: usize) {
+        let value = self.pc;
+        self.pc = value.wrapping_add(to_add);
     }
 
     pub fn fetch_next_word(self: &mut MemoryBus) -> u16 {
         let low = self.memory[self.pc] as u16;
         let high = self.memory[self.pc + 1] as u16;
-        self.pc += 2;
+        self.move_pc_by(2);
         (high << 8) | low
     }
 
-    pub fn fetch_word(self: &mut MemoryBus, position: usize) -> u16 {
+    pub fn fetch_word_at(self: &mut MemoryBus, position: usize) -> u16 {
         let low = self.memory[position] as u16;
         let high = self.memory[position + 1] as u16;
-        self.pc += 2;
         (high << 8) | low
     }
 
@@ -40,11 +44,13 @@ impl MemoryBus {
         self.memory[self.pc + 1] = value_2;
     }
 
-    pub fn fetch_byte(self: &mut MemoryBus, position: usize) -> u8 {
-        let mut position = position;
-        if position == 0 {
-            position = self.pc;
-        }
+    pub fn fetch_byte_at(self: &mut MemoryBus, position: usize) -> u8 {
+        self.memory[position]
+    }
+
+    pub fn fetch_next_byte(self: &mut MemoryBus) -> u8 {
+        let position = self.pc;
+        self.move_pc_by(1);
         self.memory[position]
     }
 
@@ -85,13 +91,23 @@ mod tests {
     }
 
     #[test]
-    fn it_fetch_byte_from_memory() {
+    fn it_fetch_byte_at_from_memory() {
         let mut memory = MemoryBus::new();
-        memory.pc = 0xFF;
-        memory.memory[0xFF] = 0xab;
-        let res = memory.fetch_byte(0);
+        memory.memory[0x15] = 0xab;
+        let res = memory.fetch_byte_at(0x15);
 
         assert_eq!(res, 0xab);
+    }
+
+    #[test]
+    fn it_fetch_next_byte_from_memory() {
+        let mut memory = MemoryBus::new();
+        memory.pc = 0xab;
+        memory.memory[0xab] = 0x1e;
+        let res = memory.fetch_next_byte();
+
+        assert_eq!(res, 0x1e);
+        assert_eq!(memory.pc, 0xab + 1);
     }
 
     #[test]

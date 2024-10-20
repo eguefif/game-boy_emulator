@@ -31,7 +31,7 @@ impl Cpu {
             }
             IncTarget::HLFlags => {
                 let position = self.registers.hl() as usize;
-                let value = self.memory.fetch_byte(position);
+                let value = self.memory.fetch_byte_at(position);
                 let result = self.inc(value);
                 self.memory.set_byte(result, position);
             }
@@ -56,5 +56,20 @@ impl Cpu {
         } else {
             self.registers.f.unset_h();
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_should_inc_register_b_no_flag() {
+        let mut cpu = Cpu::new();
+        cpu.memory.set_byte(0x04, 0);
+
+        cpu.registers.b = 0x05;
+
+        assert_eq!(cpu.registers.b, 0x05);
     }
 }
