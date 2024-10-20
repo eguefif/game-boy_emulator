@@ -318,12 +318,12 @@ mod tests {
     fn it_adds_hl_to_a() {
         let mut cpu = Cpu::new();
         cpu.memory.set_byte(0x86, 0);
-        cpu.memory.set_byte(0x00, 1);
 
         cpu.memory.set_byte(0x04, 0x2);
         cpu.registers.set_hl(0x02);
         cpu.registers.a = 0x03;
         cpu.run();
+
         assert_eq!(cpu.registers.a, 0x03 + 0x04);
     }
 
@@ -332,10 +332,10 @@ mod tests {
         let mut cpu = Cpu::new();
         cpu.memory.set_byte(0x8E, 0);
         cpu.memory.set_byte(0x04, 0x2);
-        cpu.memory.set_byte(0x00, 1);
         cpu.registers.set_hl(0x02);
         cpu.registers.a = 0x03;
         cpu.registers.f.set_carry();
+
         cpu.run();
         assert_eq!(cpu.registers.a, 0x03 + 0x04 + 0x1);
     }
